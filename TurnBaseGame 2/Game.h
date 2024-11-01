@@ -1,10 +1,9 @@
 #pragma once
 #include <iostream>
-//SDL Dependencies
 #include <SDL.h>
-#include <SDL_image.h>
-#include <SDL_mixer.h>
-#include "TextureManager.h"
+#include "Player.h"
+#include "Enemy.h"
+#include <SDL_ttf.h>
 
 
 enum class GameState 
@@ -12,10 +11,12 @@ enum class GameState
     MENU,
     PLAY,
     EXIT
+
+    //WIN AND LOSE NEED 2 B ADDED
 };
 
-
-class Game {
+class Game 
+{
 public:
     Game();
     ~Game();
@@ -26,13 +27,15 @@ public:
     void render();
     void clean();
     bool running() const;
+    void renderHealth(int health);
+
 
 private:
     bool isRunning;
     SDL_Window* window;
     SDL_Renderer* renderer;
 
-    //Textures add here
+    //Textures:
     SDL_Texture* backgroundTexture;
     SDL_Texture* gladiatorTexture;
     SDL_Texture* menuBackgroundTexture;
@@ -40,17 +43,21 @@ private:
     SDL_Texture* buttonHoverTexture;
     SDL_Texture* buttonPressedTexture;
 
+    //Fonts
+    TTF_Font* font;
 
-    //menu
+    //SFX - NEED TO ADD BACKGROUND MUSIC AND SFX
+
     GameState currentState;
+    Player player;                 // Player object
+    Enemy enemy;                  // Enemy object
 
     void renderMenu();
     void renderPlay();
 
+    //BTN states
     enum ButtonState { NORMAL, HOVER, PRESSED };
     ButtonState startButtonState = NORMAL;
-
     SDL_Rect startButtonRect = { (1024 - 200) / 2, (768 - 100) / 2, 200, 100 };  // Button's position and size
 
 };
-
