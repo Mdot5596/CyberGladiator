@@ -1,7 +1,7 @@
 #include "Player.h"
 #include <iostream>
 
-Player::Player(const std::string& name): name(name), health(100), currentAttackIndex(0) 
+Player::Player(const std::string& name) : name(name), health(100), currentAttackIndex(0)
 {
     // Create attacks 
 
@@ -14,18 +14,18 @@ Player::Player(const std::string& name): name(name), health(100), currentAttackI
 
 void Player::selectAttack(int index)
 {
-    if (index >= 0 && index < attackOptions.size()) 
+    if (index >= 0 && index < attackOptions.size())
     {
         currentAttackIndex = index;
     }
-    else 
+    else
     {
         std::cout << "error\n"; //tbc
     }
 }
 
 
-void Player::performAttack(Enemy& enemy) 
+void Player::performAttack(Enemy& enemy)
 {
     if (currentAttackIndex < 0 || currentAttackIndex >= attackOptions.size())
     {
@@ -33,9 +33,8 @@ void Player::performAttack(Enemy& enemy)
         return;
     }
 
-    std::cout << name << " attacks " << enemy.getName() << " with "
-        << attackOptions[currentAttackIndex] << "!\n";
-    enemy.receiveDamage(10); // Example damage (tbc)
+    std::cout << name << " attacks " << enemy.getName() << " with " << attackOptions[currentAttackIndex] << " Helath is now " << enemy.getHealth() << "!\n"; //golbin has been killed infinate
+    enemy.receiveDamage(5); // Example damage (tbc)
 }
 
 
@@ -61,7 +60,13 @@ int Player::getHealth() const
 
 
 
-std::string Player::getName() const 
+std::string Player::getName() const
 {
     return name;
+}
+
+
+std::vector<std::string> Player::getAttackOptions() const
+{
+    return attackOptions;
 }

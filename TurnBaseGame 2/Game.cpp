@@ -5,22 +5,25 @@
 Game::Game() : isRunning(false), window(nullptr), renderer(nullptr), currentState(GameState::MENU), player("Cyber Gladiator"), enemy("Goblin") {} //to long lol
 
 
-Game::~Game() 
+Game::~Game()
 {
     clean();
 }
 
-void Game::init(const char* title, int xpos, int ypos, int width, int height, bool fullscreen) 
+void Game::init(const char* title, int xpos, int ypos, int width, int height, bool fullscreen)
 {
-    if (SDL_Init(SDL_INIT_EVERYTHING) == 0) 
+    if (SDL_Init(SDL_INIT_EVERYTHING) == 0)
     {
         window = SDL_CreateWindow(title, xpos, ypos, width, height, fullscreen ? SDL_WINDOW_FULLSCREEN : 0);
         renderer = SDL_CreateRenderer(window, -1, 0);
         isRunning = (window && renderer);
         std::cout << "SDL initialized successfully.\n";
 
+        //Display attack options (terminal) need toSDL This
+        displayAttackOptions();
+
         //Load Fonts
-        TTF_Init();  
+        TTF_Init();
         font = TTF_OpenFont("assets/Caviar_Dreams_Bold.ttf", 24); //CHANGE - FONT SUCKS ATM
 
         // Load Textures
@@ -30,12 +33,24 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
         backgroundTexture = TextureManager::loadTexture("assets/background.png", renderer);//SHIT
         gladiatorTexture = TextureManager::loadTexture("assets/dude.png", renderer);//SHIT
     }
-    else 
+    else
     {
         isRunning = false;
     }
 
 }
+
+
+void Game::displayAttackOptions()
+{
+    std::cout << "Available Attacks" << std::endl;
+    const std::vector<std::string>& attackOptions = player.getAttackOptions();
+    for (size_t i = 0; i < attackOptions.size(); i++)  //Prints all stored atk options
+    {
+        std::cout << (i + 1) << "." << attackOptions[i] << std::endl;
+    }
+}
+
 
 
 void Game::handleEvents()
@@ -48,7 +63,7 @@ void Game::handleEvents()
             isRunning = false;
         }
 
-        else if (event.type == SDL_MOUSEMOTION) 
+        else if (event.type == SDL_MOUSEMOTION)
         {
             // Check if the mouse is hovering over the button
             int mouseX = event.motion.x;
@@ -58,30 +73,30 @@ void Game::handleEvents()
             {
                 startButtonState = HOVER;
             }
-            else 
+            else
             {
                 startButtonState = NORMAL;
             }
         }
-        else if (event.type == SDL_MOUSEBUTTONDOWN && startButtonState == HOVER) 
+        else if (event.type == SDL_MOUSEBUTTONDOWN && startButtonState == HOVER)
         {
             currentState = GameState::PLAY; // Trans to play state
         }
-        else if (event.type == SDL_KEYDOWN) 
+        else if (event.type == SDL_KEYDOWN)
         {
-            if (currentState == GameState::PLAY) 
+            if (currentState == GameState::PLAY)
             {
-                if (event.key.keysym.sym == SDLK_1) 
+                if (event.key.keysym.sym == SDLK_1)
                 {
                     player.selectAttack(0); // Select first attack
                     player.performAttack(enemy); // Perform attack on enemy
                 }
-                else if (event.key.keysym.sym == SDLK_2) 
+                else if (event.key.keysym.sym == SDLK_2)
                 {
                     player.selectAttack(1); // Select second attack
                     player.performAttack(enemy); // Perform attack on enemy
                 }
-                else if (event.key.keysym.sym == SDLK_3) 
+                else if (event.key.keysym.sym == SDLK_3)
                 {
                     player.selectAttack(2); // Select third attack
                     player.performAttack(enemy); // Perform attack on enemy
@@ -91,7 +106,7 @@ void Game::handleEvents()
     }
 }
 
-void Game::update() 
+void Game::update()
 {
     // Update game logic
     if (!enemy.isAlive())
@@ -101,16 +116,16 @@ void Game::update()
     }
 }
 
-void Game::render() 
+void Game::render()
 {
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); // Set background colour
     SDL_RenderClear(renderer);
 
-    if (currentState == GameState::MENU) 
+    if (currentState == GameState::MENU)
     {
         renderMenu();
     }
-    else if (currentState == GameState::PLAY) 
+    else if (currentState == GameState::PLAY)
     {
         renderPlay();
         // Render the goblin's health after rendering the game elements
@@ -128,7 +143,7 @@ void Game::renderMenu()
 
     // Choose the texture for the button based on its state
     SDL_Texture* buttonTexture = buttonNormalTexture; // Default button state
-    if (startButtonState == HOVER) 
+    if (startButtonState == HOVER)
     {
         buttonTexture = buttonHoverTexture;
     }
@@ -141,7 +156,7 @@ void Game::renderMenu()
     TextureManager::render(buttonTexture, renderer, startButtonRect);
 }
 
-void Game::renderPlay() 
+void Game::renderPlay()
 {
     // Render background and gladiator
     SDL_Rect destRect = { 0, 0, 1024, 768 }; // Background position and size
@@ -152,7 +167,7 @@ void Game::renderPlay()
 }
 
 
-void Game::renderHealth(int health) 
+void Game::renderHealth(int health)
 {
     // Convert health to string
     std::string healthText = "Goblin Health: " + std::to_string(health);

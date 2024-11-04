@@ -3,7 +3,7 @@
 #include <string>
 #include "Enemy.h" 
 
-class Player 
+class Player
 {
 
 public:
@@ -17,6 +17,9 @@ public:
 
     int getHealth() const;             // Get current health
     std::string getName() const;      // Get player name
+
+
+    std::vector<std::string> getAttackOptions() const; //Displays indx to temnial
 
 
 private:

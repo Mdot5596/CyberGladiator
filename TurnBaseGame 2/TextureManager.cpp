@@ -4,10 +4,10 @@
 
 
 
-SDL_Texture* TextureManager::loadTexture(const std::string& fileName, SDL_Renderer* renderer) 
+SDL_Texture* TextureManager::loadTexture(const std::string& fileName, SDL_Renderer* renderer)
 {
     SDL_Texture* texture = IMG_LoadTexture(renderer, fileName.c_str());
-    if (!texture) 
+    if (!texture)
     {
         std::cout << "Failed to load texture: " << fileName << " - " << IMG_GetError() << std::endl;
     }
@@ -16,7 +16,7 @@ SDL_Texture* TextureManager::loadTexture(const std::string& fileName, SDL_Render
 
 
 
-void TextureManager::render(SDL_Texture* tex, SDL_Renderer* ren, SDL_Rect dst) 
+void TextureManager::render(SDL_Texture* tex, SDL_Renderer* ren, SDL_Rect dst)
 {
     SDL_RenderCopy(ren, tex, nullptr, &dst);
 }

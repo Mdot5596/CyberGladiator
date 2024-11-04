@@ -1,8 +1,8 @@
 #pragma once
 #include <string>
 
-class Enemy 
- {
+class Enemy
+{
 public:
     Enemy(const std::string& name);
 

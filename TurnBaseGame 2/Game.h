@@ -6,7 +6,7 @@
 #include <SDL_ttf.h>
 
 
-enum class GameState 
+enum class GameState
 {
     MENU,
     PLAY,
@@ -15,7 +15,7 @@ enum class GameState
     //WIN AND LOSE NEED 2 B ADDED
 };
 
-class Game 
+class Game
 {
 public:
     Game();
@@ -28,7 +28,7 @@ public:
     void clean();
     bool running() const;
     void renderHealth(int health);
-
+    void displayAttackOptions();
 
 private:
     bool isRunning;

@@ -2,7 +2,7 @@
 #include <SDL.h>
 #include <string>
 
-class TextureManager 
+class TextureManager
 {
 public:
     static SDL_Texture* loadTexture(const std::string& fileName, SDL_Renderer* renderer);
