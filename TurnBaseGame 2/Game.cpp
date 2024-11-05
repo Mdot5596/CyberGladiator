@@ -101,6 +101,14 @@ void Game::handleEvents()
                     player.selectAttack(2); // Select third attack
                     player.performAttack(enemy); // Perform attack on enemy
                 }
+                // Check if enemy is alive before enemy attacks
+                if (enemy.isAlive())
+                {
+                    // The enemy attacks
+                    std::cout << enemy.getName() << " attacks " << player.getName() << "!\n"; //Hits with? instead of attack myb
+                    player.receiveDamage(5); // Damage - could be changed to a random value between 5-10 would be better
+                }
+
             }
         }
     }
@@ -111,8 +119,14 @@ void Game::update()
     // Update game logic
     if (!enemy.isAlive())
     {
-        std::cout << enemy.getName() << " has been Killed!\n"; //slain instead of killed?
-        // NEED TO ADD MORE LOGIC FOR WINNING LIKEEEE AN ANIMATION OR SM
+        std::cout << enemy.getName() << " has been slain!\n";
+        isRunning = false; // End the game if enemy is defeated
+    }
+
+    if (!player.isAlive())
+    {
+        std::cout << player.getName() << " has been defeated!\n";
+        isRunning = false; // End the game if player is defeated
     }
 }
 
@@ -128,8 +142,10 @@ void Game::render()
     else if (currentState == GameState::PLAY)
     {
         renderPlay();
-        // Render the goblin's health after rendering the game elements
-        renderHealth(enemy.getHealth());
+        // Render the enemy health
+        renderHealth(enemy.getHealth(), false);
+        // Render the player's health
+        renderHealth(player.getHealth(), true);
     }
 
     SDL_RenderPresent(renderer);
@@ -167,10 +183,10 @@ void Game::renderPlay()
 }
 
 
-void Game::renderHealth(int health)
+void Game::renderHealth(int health, bool isPlayer)
 {
     // Convert health to string
-    std::string healthText = "Goblin Health: " + std::to_string(health);
+    std::string healthText = (isPlayer ? "Player Health: " : "Goblin Health: ") + std::to_string(health);
     SDL_Color textColor = { 255, 0, 0 };  // Red color for the text
 
     SDL_Surface* textSurface = TTF_RenderText_Solid(font, healthText.c_str(), textColor);
@@ -178,7 +194,7 @@ void Game::renderHealth(int health)
 
     // Position for the text
     SDL_Rect textRect;
-    textRect.x = 10; // X position
+    textRect.x = isPlayer ? (800 - textSurface->w - 10) : 10; // Player health on the right side, enemy on the left
     textRect.y = 10; // Y position
     textRect.w = textSurface->w; // Width of the text
     textRect.h = textSurface->h; // Height of the text

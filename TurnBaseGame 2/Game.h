@@ -27,7 +27,7 @@ public:
     void render();
     void clean();
     bool running() const;
-    void renderHealth(int health);
+    void renderHealth(int health, bool isPlayer);
     void displayAttackOptions();
 
 private:
