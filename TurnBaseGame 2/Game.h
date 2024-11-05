@@ -10,6 +10,7 @@ enum class GameState
 {
     MENU,
     PLAY,
+    GAME_OVER,
     EXIT
 
     //WIN AND LOSE NEED 2 B ADDED
@@ -54,6 +55,7 @@ private:
 
     void renderMenu();
     void renderPlay();
+    void renderGameOver();
 
     //BTN states
     enum ButtonState { NORMAL, HOVER, PRESSED };

@@ -101,34 +101,61 @@ void Game::handleEvents()
                     player.selectAttack(2); // Select third attack
                     player.performAttack(enemy); // Perform attack on enemy
                 }
+
                 // Check if enemy is alive before enemy attacks
                 if (enemy.isAlive())
                 {
                     // The enemy attacks
                     std::cout << enemy.getName() << " attacks " << player.getName() << "!\n"; //Hits with? instead of attack myb
-                    player.receiveDamage(5); // Damage - could be changed to a random value between 5-10 would be better
+                    player.receiveDamage(1); // Damage - could be changed to a random value between 5-10 would be better
                 }
 
             }
+            else if (currentState == GameState::GAME_OVER)
+            {
+                // Handle restart logic
+                if (event.key.keysym.sym == SDLK_r)
+                {
+                    // Reset the game state and health
+                    player = Player("Cyber Gladiator"); // Reinitialize player
+                    enemy = Enemy("Goblin"); // Reinitialize enemy
+                    currentState = GameState::MENU; // Reset to menu
+                }
+            }
+        }
+    }
+
+    if (!player.isAlive() || !enemy.isAlive()) // Check for game over conditions
+    {
+        currentState = GameState::GAME_OVER;  // Transition to game over state
+        if (!enemy.isAlive())
+        {
+            std::cout << enemy.getName() << " has been slain!\n"; 
+        }
+        if (!player.isAlive())
+        {
+            std::cout << player.getName() << " has died!\n"; 
         }
     }
 }
 
+
+
 void Game::update()
 {
-    // Update game logic
+
     if (!enemy.isAlive())
     {
-        std::cout << enemy.getName() << " has been slain!\n";
-        isRunning = false; // End the game if enemy is defeated
+        currentState = GameState::GAME_OVER;
     }
 
     if (!player.isAlive())
     {
-        std::cout << player.getName() << " has been defeated!\n";
-        isRunning = false; // End the game if player is defeated
+        currentState = GameState::GAME_OVER;
     }
+
 }
+
 
 void Game::render()
 {
@@ -146,6 +173,10 @@ void Game::render()
         renderHealth(enemy.getHealth(), false);
         // Render the player's health
         renderHealth(player.getHealth(), true);
+    }
+    else if (currentState == GameState::GAME_OVER)
+    {
+        renderGameOver();
     }
 
     SDL_RenderPresent(renderer);
@@ -206,6 +237,43 @@ void Game::renderHealth(int health, bool isPlayer)
     SDL_FreeSurface(textSurface);
     SDL_DestroyTexture(textTexture);
 }
+
+
+void Game::renderGameOver()
+{
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); // Set background colour
+    SDL_RenderClear(renderer);
+
+    // Display Game Over Message
+    std::string gameOverText = "Game Over!";
+    std::string restartText = "Press 'R' to Restart";
+
+    SDL_Color textColor = { 255, 0, 0 };  // Red for the text
+
+    // Render Game Over Text
+    SDL_Surface* gameOverSurface = TTF_RenderText_Solid(font, gameOverText.c_str(), textColor);
+    SDL_Texture* gameOverTexture = SDL_CreateTextureFromSurface(renderer, gameOverSurface);
+    SDL_Rect gameOverRect = { (800 - gameOverSurface->w) / 2, 200, gameOverSurface->w, gameOverSurface->h };
+
+    SDL_RenderCopy(renderer, gameOverTexture, nullptr, &gameOverRect);
+
+    // Render Restart Text
+    SDL_Surface* restartSurface = TTF_RenderText_Solid(font, restartText.c_str(), textColor);
+    SDL_Texture* restartTexture = SDL_CreateTextureFromSurface(renderer, restartSurface);
+    SDL_Rect restartRect = { (800 - restartSurface->w) / 2, 300, restartSurface->w, restartSurface->h };
+
+    SDL_RenderCopy(renderer, restartTexture, nullptr, &restartRect);
+
+    // Cleanup
+    SDL_FreeSurface(gameOverSurface);
+    SDL_FreeSurface(restartSurface);
+    SDL_DestroyTexture(gameOverTexture);
+    SDL_DestroyTexture(restartTexture);
+}
+
+
+
+
 
 void Game::clean()
 {
