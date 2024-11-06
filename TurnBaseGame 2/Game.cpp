@@ -1,6 +1,8 @@
 #include "Game.h"
 #include "TextureManager.h"
 #include <iostream>
+#include <SDL.h>
+#include <SDL_ttf.h>
 
 Game::Game() : isRunning(false), window(nullptr), renderer(nullptr), currentState(GameState::MENU), player("Cyber Gladiator"), enemy("Goblin") {} //to long lol
 
@@ -90,16 +92,19 @@ void Game::handleEvents()
                 {
                     player.selectAttack(0); // Select first attack
                     player.performAttack(enemy); // Perform attack on enemy
+                    SDL_Delay(1000); //Delay after player attack
                 }
                 else if (event.key.keysym.sym == SDLK_2)
                 {
                     player.selectAttack(1); // Select second attack
                     player.performAttack(enemy); // Perform attack on enemy
+                    SDL_Delay(1000); //Delay after player attack
                 }
                 else if (event.key.keysym.sym == SDLK_3)
                 {
                     player.selectAttack(2); // Select third attack
                     player.performAttack(enemy); // Perform attack on enemy
+                    SDL_Delay(1000); //Delay after player attack
                 }
 
                 // Check if enemy is alive before enemy attacks
@@ -218,7 +223,7 @@ void Game::renderHealth(int health, bool isPlayer)
 {
     // Convert health to string
     std::string healthText = (isPlayer ? "Player Health: " : "Goblin Health: ") + std::to_string(health);
-    SDL_Color textColor = { 255, 0, 0 };  // Red color for the text
+    SDL_Color textColor = { 255, 0, 0 };  // Red colour for the text
 
     SDL_Surface* textSurface = TTF_RenderText_Solid(font, healthText.c_str(), textColor);
     SDL_Texture* textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
@@ -230,13 +235,26 @@ void Game::renderHealth(int health, bool isPlayer)
     textRect.w = textSurface->w; // Width of the text
     textRect.h = textSurface->h; // Height of the text
 
-    // Render the text
+    //CAN CHANGE ALL OF THIS AND REPLACEWITH A IMAGE INSEAD OF SDL CREATING BOX????????????????
+
+    // Create a rectangle larger than the text for the background box
+    SDL_Rect backgroundRect = { textRect.x - 5, textRect.y - 5, textRect.w + 10, textRect.h + 10 };
+
+    // Set colour to white and draw the background rectangle
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);  // White color
+    SDL_RenderFillRect(renderer, &backgroundRect);
+
+    // Render the text on top of the background
     SDL_RenderCopy(renderer, textTexture, nullptr, &textRect);
 
     // Cleanup
     SDL_FreeSurface(textSurface);
     SDL_DestroyTexture(textTexture);
+
+    // Reset the drawing color to black (or any color for further rendering)
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 }
+
 
 
 void Game::renderGameOver()
