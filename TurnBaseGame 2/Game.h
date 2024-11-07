@@ -16,9 +16,12 @@ enum class GameState
     //WIN AND LOSE NEED 2 B ADDED
 };
 
+enum ButtonState { NORMAL, HOVER, PRESSED };
+
 class Game
 {
 public:
+
     Game();
     ~Game();
 
@@ -30,6 +33,9 @@ public:
     bool running() const;
     void renderHealth(int health, bool isPlayer);
     void displayAttackOptions();
+    void renderAttackButtons();
+
+
 
 private:
     bool isRunning;
@@ -43,6 +49,7 @@ private:
     SDL_Texture* buttonNormalTexture;
     SDL_Texture* buttonHoverTexture;
     SDL_Texture* buttonPressedTexture;
+    SDL_Texture* attackButtonTextures[3]; // Textures for each attack button
 
     //Fonts
     TTF_Font* font;
@@ -60,6 +67,17 @@ private:
     //BTN states
     enum ButtonState { NORMAL, HOVER, PRESSED };
     ButtonState startButtonState = NORMAL;
-    SDL_Rect startButtonRect = { (1024 - 200) / 2, (768 - 100) / 2, 200, 100 };  // Button's position and size
+    ButtonState attackButtonStates[3] = { NORMAL, NORMAL, NORMAL };  // Array to store the states of 3 attack buttons
+
+    SDL_Rect startButtonRect = { (1024 - 200) / 2, (768 - 100) / 2, 200, 100 };
+
+
+    SDL_Rect attackButtonRects[3] = 
+    {
+        { 150, 500, 150, 150 }, // Position for first attack button (x, y, width, height)
+        { 350, 500, 150, 150 }, // Position for second attack button
+        { 550, 500, 150, 150 }  // Position for third attack button
+    };
+
 
 };

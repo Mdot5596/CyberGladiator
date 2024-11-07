@@ -34,6 +34,10 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
         buttonHoverTexture = TextureManager::loadTexture("assets/startbown.png", renderer);//GOOD
         backgroundTexture = TextureManager::loadTexture("assets/background.png", renderer);//SHIT
         gladiatorTexture = TextureManager::loadTexture("assets/dude.png", renderer);//SHIT
+        attackButtonTextures[0] = TextureManager::loadTexture("assets/ATK BTN 1.png", renderer);
+        attackButtonTextures[1] = TextureManager::loadTexture("assets/ATK BTN 1.png", renderer);
+        attackButtonTextures[2] = TextureManager::loadTexture("assets/ATK BTN 1.png", renderer);
+
     }
     else
     {
@@ -54,7 +58,6 @@ void Game::displayAttackOptions()
 }
 
 
-
 void Game::handleEvents()
 {
     SDL_Event event;
@@ -65,11 +68,13 @@ void Game::handleEvents()
             isRunning = false;
         }
 
+        // Mouse motion events for hovering over buttons
         else if (event.type == SDL_MOUSEMOTION)
         {
-            // Check if the mouse is hovering over the button
             int mouseX = event.motion.x;
             int mouseY = event.motion.y;
+
+            // Check if hovering over the start button
             if (mouseX >= startButtonRect.x && mouseX <= startButtonRect.x + startButtonRect.w &&
                 mouseY >= startButtonRect.y && mouseY <= startButtonRect.y + startButtonRect.h)
             {
@@ -79,70 +84,68 @@ void Game::handleEvents()
             {
                 startButtonState = NORMAL;
             }
+
+            // Check if hovering over attack buttons
+            for (int i = 0; i < 3; ++i)
+            {
+                if (mouseX >= attackButtonRects[i].x && mouseX <= attackButtonRects[i].x + attackButtonRects[i].w &&
+                    mouseY >= attackButtonRects[i].y && mouseY <= attackButtonRects[i].y + attackButtonRects[i].h)
+                {
+                    attackButtonStates[i] = HOVER;
+                }
+                else
+                {
+                    attackButtonStates[i] = NORMAL;
+                }
+            }
         }
-        else if (event.type == SDL_MOUSEBUTTONDOWN && startButtonState == HOVER)
+
+        // Mouse button down events for clicking buttons
+        else if (event.type == SDL_MOUSEBUTTONDOWN)
         {
-            currentState = GameState::PLAY; // Trans to play state
+            if (startButtonState == HOVER)
+            {
+                currentState = GameState::PLAY;
+            }
+
+            for (int i = 0; i < 3; ++i)
+            {
+                if (attackButtonStates[i] == HOVER && currentState == GameState::PLAY)
+                {
+                    player.selectAttack(i);       // Select attack based on button index
+                    player.performAttack(enemy);  // Perform the selected attack
+                    SDL_Delay(1000);              // Delay to simulate time between attacks
+
+                    // Enemy attacks if still alive
+                    if (enemy.isAlive())
+                    {
+                        std::cout << enemy.getName() << " attacks " << player.getName() << "!\n";
+                        player.receiveDamage(5);  // Example damage
+                    }
+
+                    // Check for game over condition
+                    if (!enemy.isAlive() || !player.isAlive())
+                    {
+                        currentState = GameState::GAME_OVER;
+                    }
+                }
+            }
         }
+
+        // Restart game with 'R' key
         else if (event.type == SDL_KEYDOWN)
         {
-            if (currentState == GameState::PLAY)
+            if (currentState == GameState::GAME_OVER && event.key.keysym.sym == SDLK_r)
             {
-                if (event.key.keysym.sym == SDLK_1)
-                {
-                    player.selectAttack(0); // Select first attack
-                    player.performAttack(enemy); // Perform attack on enemy
-                    SDL_Delay(1000); //Delay after player attack
-                }
-                else if (event.key.keysym.sym == SDLK_2)
-                {
-                    player.selectAttack(1); // Select second attack
-                    player.performAttack(enemy); // Perform attack on enemy
-                    SDL_Delay(1000); //Delay after player attack
-                }
-                else if (event.key.keysym.sym == SDLK_3)
-                {
-                    player.selectAttack(2); // Select third attack
-                    player.performAttack(enemy); // Perform attack on enemy
-                    SDL_Delay(1000); //Delay after player attack
-                }
-
-                // Check if enemy is alive before enemy attacks
-                if (enemy.isAlive())
-                {
-                    // The enemy attacks
-                    std::cout << enemy.getName() << " attacks " << player.getName() << "!\n"; //Hits with? instead of attack myb
-                    player.receiveDamage(1); // Damage - could be changed to a random value between 5-10 would be better
-                }
-
+                // Reset player and enemy
+                player = Player("Cyber Gladiator");
+                enemy = Enemy("Goblin");
+                currentState = GameState::MENU;
             }
-            else if (currentState == GameState::GAME_OVER)
-            {
-                // Handle restart logic
-                if (event.key.keysym.sym == SDLK_r)
-                {
-                    // Reset the game state and health
-                    player = Player("Cyber Gladiator"); // Reinitialize player
-                    enemy = Enemy("Goblin"); // Reinitialize enemy
-                    currentState = GameState::MENU; // Reset to menu
-                }
-            }
-        }
-    }
-
-    if (!player.isAlive() || !enemy.isAlive()) // Check for game over conditions
-    {
-        currentState = GameState::GAME_OVER;  // Transition to game over state
-        if (!enemy.isAlive())
-        {
-            std::cout << enemy.getName() << " has been slain!\n"; 
-        }
-        if (!player.isAlive())
-        {
-            std::cout << player.getName() << " has died!\n"; 
         }
     }
 }
+
 
 
 
@@ -169,12 +172,14 @@ void Game::render()
 
     if (currentState == GameState::MENU)
     {
-        renderMenu();
+       renderMenu();
     }
     else if (currentState == GameState::PLAY)
     {
         renderPlay();
         // Render the enemy health
+        renderAttackButtons();
+        //Rebder Attack btns
         renderHealth(enemy.getHealth(), false);
         // Render the player's health
         renderHealth(player.getHealth(), true);
@@ -216,6 +221,29 @@ void Game::renderPlay()
 
     SDL_Rect gladiatorRect = { 100, 100, 150, 150 }; // Gladiator position and size
     TextureManager::render(gladiatorTexture, renderer, gladiatorRect);
+
+    // Adjust the Y-positions so attack buttons don't overlap
+    for (int i = 0; i < 3; ++i)
+    {
+        SDL_Texture* textureToUse = nullptr;
+        switch (attackButtonStates[i])
+        {
+        case NORMAL:
+            textureToUse = buttonNormalTexture;
+            break;
+        case HOVER:
+            textureToUse = buttonHoverTexture;
+            break;
+        case PRESSED:
+            textureToUse = buttonPressedTexture;
+            break;
+        }
+
+        // Ensure attack buttons are spaced well below the gladiator and not overlapping
+        SDL_Rect rect = attackButtonRects[i];
+        rect.y = 600; // Ensure buttons are placed lower
+        TextureManager::render(textureToUse, renderer, rect);
+    }
 }
 
 
@@ -289,6 +317,16 @@ void Game::renderGameOver()
     SDL_DestroyTexture(restartTexture);
 }
 
+
+void Game::renderAttackButtons()
+{
+    for (int i = 0; i < 3; ++i)
+    {
+        SDL_Texture* buttonTexture = attackButtonTextures[i];
+        SDL_Rect buttonRect = attackButtonRects[i];
+        TextureManager::render(buttonTexture, renderer, buttonRect);
+    }
+}
 
 
 
