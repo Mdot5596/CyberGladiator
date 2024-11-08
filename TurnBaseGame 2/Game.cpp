@@ -37,9 +37,9 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
         buttonHoverTexture = TextureManager::loadTexture("assets/startbown.png", renderer);//GOOD
         backgroundTexture = TextureManager::loadTexture("assets/TESTWALL.png", renderer);//SHIT
         gladiatorTexture = TextureManager::loadTexture("assets/dude.png", renderer);//SHIT
-        attackButtonTextures[0] = TextureManager::loadTexture("assets/ATK BTN 1.png", renderer);
-        attackButtonTextures[1] = TextureManager::loadTexture("assets/ATK BTN 1.png", renderer);
-        attackButtonTextures[2] = TextureManager::loadTexture("assets/ATK BTN 1.png", renderer);
+        attackButtonTextures[0] = TextureManager::loadTexture("assets/slashbtn.png", renderer);
+        attackButtonTextures[1] = TextureManager::loadTexture("assets/kickbtn.png", renderer);
+        attackButtonTextures[2] = TextureManager::loadTexture("assets/fireballbtn.png", renderer);
 
     }
     else

@@ -74,9 +74,9 @@ private:
 
     SDL_Rect attackButtonRects[3] =
     {
-        { 150, 500, 150, 150 }, // Position for first attack button (x, y, width, height)
-        { 350, 500, 150, 150 }, // Position for second attack button
-        { 550, 500, 150, 150 }  // Position for third attack button
+        { 150, 600, 250, 250 }, // Position for first attack button (x, y, width, height)
+        { 425, 600, 250, 250 }, // Position for second attack button
+        { 700, 600, 250, 250 }   // Position for third attack button
     };
 
 
