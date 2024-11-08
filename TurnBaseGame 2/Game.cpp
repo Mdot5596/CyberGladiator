@@ -14,6 +14,9 @@ Game::~Game()
 
 void Game::init(const char* title, int xpos, int ypos, int width, int height, bool fullscreen)
 {
+    width = 1024;  // Override the width to 1024
+    height = 768;  // Override the height to 768
+
     if (SDL_Init(SDL_INIT_EVERYTHING) == 0)
     {
         window = SDL_CreateWindow(title, xpos, ypos, width, height, fullscreen ? SDL_WINDOW_FULLSCREEN : 0);
@@ -29,10 +32,10 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
         font = TTF_OpenFont("assets/Caviar_Dreams_Bold.ttf", 24); //CHANGE - FONT SUCKS ATM
 
         // Load Textures
-        menuBackgroundTexture = TextureManager::loadTexture("assets/background1.png", renderer);//SHIT
+        menuBackgroundTexture = TextureManager::loadTexture("assets/background.png", renderer);//SHIT
         buttonNormalTexture = TextureManager::loadTexture("assets/STARTBTN.png", renderer);//GOOD
         buttonHoverTexture = TextureManager::loadTexture("assets/startbown.png", renderer);//GOOD
-        backgroundTexture = TextureManager::loadTexture("assets/background.png", renderer);//SHIT
+        backgroundTexture = TextureManager::loadTexture("assets/TESTWALL.png", renderer);//SHIT
         gladiatorTexture = TextureManager::loadTexture("assets/dude.png", renderer);//SHIT
         attackButtonTextures[0] = TextureManager::loadTexture("assets/ATK BTN 1.png", renderer);
         attackButtonTextures[1] = TextureManager::loadTexture("assets/ATK BTN 1.png", renderer);
@@ -222,28 +225,7 @@ void Game::renderPlay()
     SDL_Rect gladiatorRect = { 100, 100, 150, 150 }; // Gladiator position and size
     TextureManager::render(gladiatorTexture, renderer, gladiatorRect);
 
-    // Adjust the Y-positions so attack buttons don't overlap
-    for (int i = 0; i < 3; ++i)
-    {
-        SDL_Texture* textureToUse = nullptr;
-        switch (attackButtonStates[i])
-        {
-        case NORMAL:
-            textureToUse = buttonNormalTexture;
-            break;
-        case HOVER:
-            textureToUse = buttonHoverTexture;
-            break;
-        case PRESSED:
-            textureToUse = buttonPressedTexture;
-            break;
-        }
-
-        // Ensure attack buttons are spaced well below the gladiator and not overlapping
-        SDL_Rect rect = attackButtonRects[i];
-        rect.y = 600; // Ensure buttons are placed lower
-        TextureManager::render(textureToUse, renderer, rect);
-    }
+   //FIXED THE MLTPL BUTTON ISSUE BY REMOVING THE SWITCH STATMENT HERER
 }
 
 

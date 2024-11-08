@@ -72,7 +72,7 @@ private:
     SDL_Rect startButtonRect = { (1024 - 200) / 2, (768 - 100) / 2, 200, 100 };
 
 
-    SDL_Rect attackButtonRects[3] = 
+    SDL_Rect attackButtonRects[3] =
     {
         { 150, 500, 150, 150 }, // Position for first attack button (x, y, width, height)
         { 350, 500, 150, 150 }, // Position for second attack button
