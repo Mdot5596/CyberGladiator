@@ -3,6 +3,8 @@
 #include <iostream>
 #include <SDL.h>
 #include <SDL_ttf.h>
+#include <sstream>
+#include <vector>
 
 Game::Game() : isRunning(false), window(nullptr), renderer(nullptr), currentState(GameState::MENU), player("Cyber Gladiator"), enemy("Goblin") {} //to long lol
 
@@ -17,6 +19,7 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
     width = 1024;  // Override the width to 1024
     height = 768;  // Override the height to 768
 
+
     if (SDL_Init(SDL_INIT_EVERYTHING) == 0)
     {
         window = SDL_CreateWindow(title, xpos, ypos, width, height, fullscreen ? SDL_WINDOW_FULLSCREEN : 0);
@@ -30,6 +33,7 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
         //Load Fonts
         TTF_Init();
         font = TTF_OpenFont("assets/Caviar_Dreams_Bold.ttf", 24); //CHANGE - FONT SUCKS ATM
+        font2 = TTF_OpenFont("assets/Caviar_Dreams_Bold.ttf", 12); //CHANGE - FONT SUCKS ATM
 
         // Load Textures
         menuBackgroundTexture = TextureManager::loadTexture("assets/background.png", renderer);//SHIT
@@ -40,6 +44,7 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
         attackButtonTextures[0] = TextureManager::loadTexture("assets/slashbtn.png", renderer);
         attackButtonTextures[1] = TextureManager::loadTexture("assets/kickbtn.png", renderer);
         attackButtonTextures[2] = TextureManager::loadTexture("assets/fireballbtn.png", renderer);
+        attackLogTexture = TextureManager::loadTexture("assets/attacklog.png", renderer);
 
     }
     else
@@ -61,10 +66,10 @@ void Game::displayAttackOptions()
 }
 
 
-void Game::handleEvents()
+void Game::handleEvents() 
 {
     SDL_Event event;
-    while (SDL_PollEvent(&event))
+    while (SDL_PollEvent(&event)) 
     {
         if (event.type == SDL_QUIT)
         {
@@ -72,7 +77,7 @@ void Game::handleEvents()
         }
 
         // Mouse motion events for hovering over buttons
-        else if (event.type == SDL_MOUSEMOTION)
+        else if (event.type == SDL_MOUSEMOTION) 
         {
             int mouseX = event.motion.x;
             int mouseY = event.motion.y;
@@ -83,20 +88,20 @@ void Game::handleEvents()
             {
                 startButtonState = HOVER;
             }
-            else
+            else 
             {
                 startButtonState = NORMAL;
             }
 
             // Check if hovering over attack buttons
-            for (int i = 0; i < 3; ++i)
+            for (int i = 0; i < 3; ++i) 
             {
                 if (mouseX >= attackButtonRects[i].x && mouseX <= attackButtonRects[i].x + attackButtonRects[i].w &&
                     mouseY >= attackButtonRects[i].y && mouseY <= attackButtonRects[i].y + attackButtonRects[i].h)
                 {
                     attackButtonStates[i] = HOVER;
                 }
-                else
+                else 
                 {
                     attackButtonStates[i] = NORMAL;
                 }
@@ -106,24 +111,34 @@ void Game::handleEvents()
         // Mouse button down events for clicking buttons
         else if (event.type == SDL_MOUSEBUTTONDOWN)
         {
-            if (startButtonState == HOVER)
+            if (startButtonState == HOVER) 
             {
                 currentState = GameState::PLAY;
             }
 
-            for (int i = 0; i < 3; ++i)
-            {
-                if (attackButtonStates[i] == HOVER && currentState == GameState::PLAY)
-                {
-                    player.selectAttack(i);       // Select attack based on button index
-                    player.performAttack(enemy);  // Perform the selected attack
-                    SDL_Delay(1000);              // Delay to simulate time between attacks
+            for (int i = 0; i < 3; ++i) {
+                if (attackButtonStates[i] == HOVER && currentState == GameState::PLAY) {
+                    player.selectAttack(i);        // Select attack based on button index
+                    player.performAttack(enemy);   // Perform the selected attack
+
+                    // Add attack log message
+                    std::string attackMessage = player.getName() + " attacks " + enemy.getName() +
+                        " with " + player.getAttackOptions()[i] + ". ";
+                    attackMessage += enemy.getName() + "'s health: " + std::to_string(enemy.getHealth());
+                    attackLog.push_back(attackMessage);  // Store the attack message
+
+                    SDL_Delay(1000);  // Delay to simulate time between attacks
 
                     // Enemy attacks if still alive
                     if (enemy.isAlive())
                     {
                         std::cout << enemy.getName() << " attacks " << player.getName() << "!\n";
                         player.receiveDamage(5);  // Example damage
+
+                        // Log enemy attack
+                        std::string enemyAttackMessage = enemy.getName() + " attacks " + player.getName() +
+                            ". " + player.getName() + "'s health: " + std::to_string(player.getHealth());
+                        attackLog.push_back(enemyAttackMessage);  // Store enemy attack message
                     }
 
                     // Check for game over condition
@@ -152,6 +167,7 @@ void Game::handleEvents()
 
 
 
+
 void Game::update()
 {
 
@@ -168,6 +184,7 @@ void Game::update()
 }
 
 
+
 void Game::render()
 {
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); // Set background colour
@@ -180,11 +197,9 @@ void Game::render()
     else if (currentState == GameState::PLAY)
     {
         renderPlay();
-        // Render the enemy health
+        renderAttackLog();
         renderAttackButtons();
-        //Rebder Attack btns
         renderHealth(enemy.getHealth(), false);
-        // Render the player's health
         renderHealth(player.getHealth(), true);
     }
     else if (currentState == GameState::GAME_OVER)
@@ -194,6 +209,8 @@ void Game::render()
 
     SDL_RenderPresent(renderer);
 }
+
+
 
 void Game::renderMenu()
 {
@@ -216,6 +233,8 @@ void Game::renderMenu()
     TextureManager::render(buttonTexture, renderer, startButtonRect);
 }
 
+
+
 void Game::renderPlay()
 {
     // Render background and gladiator
@@ -225,8 +244,11 @@ void Game::renderPlay()
     SDL_Rect gladiatorRect = { 100, 100, 150, 150 }; // Gladiator position and size
     TextureManager::render(gladiatorTexture, renderer, gladiatorRect);
 
+    renderAttackLog();
+
    //FIXED THE MLTPL BUTTON ISSUE BY REMOVING THE SWITCH STATMENT HERER
 }
+
 
 
 void Game::renderHealth(int health, bool isPlayer)
@@ -312,6 +334,74 @@ void Game::renderAttackButtons()
 
 
 
+// Utility function to split text into lines that fit within a specified width
+std::vector<std::string> wrapText(TTF_Font* font, const std::string& text, int maxWidth)
+{
+    std::vector<std::string> wrappedLines;
+    std::istringstream words(text);
+    std::string word, line;
+
+    while (words >> word) 
+    {
+        std::string testLine = line + (line.empty() ? "" : " ") + word;
+
+        int textWidth;
+        TTF_SizeText(font, testLine.c_str(), &textWidth, nullptr);
+
+        if (textWidth > maxWidth) 
+        {
+            if (!line.empty()) wrappedLines.push_back(line); // Push current line if it has content
+            line = word;
+        }
+        else 
+        {
+            line = testLine;
+        }
+    }
+
+    if (!line.empty()) wrappedLines.push_back(line); // Add the final line if it's not empty
+
+    return wrappedLines;
+}
+
+
+void Game::renderAttackLog()
+{
+    // Render the background of the attack log
+    TextureManager::render(attackLogTexture, renderer, attackLogRect);
+
+    // Define padding and text parameters
+    const int sidePadding = 80;
+    const int verticalPadding = 100;
+    const int lineHeight = TTF_FontHeight(font);
+    const int maxVisibleLines = (attackLogRect.h - 2 * verticalPadding) / lineHeight;
+
+    int yOffset = attackLogRect.y + verticalPadding;
+    int visibleLinesCount = 0;
+
+    for (auto it = attackLog.rbegin(); it != attackLog.rend() && visibleLinesCount < maxVisibleLines; ++it) 
+    {
+        std::vector<std::string> wrappedLines = wrapText(font, *it, attackLogRect.w - 2 * sidePadding);
+
+        for (const auto& line : wrappedLines)
+        {
+            if (visibleLinesCount >= maxVisibleLines) break;
+
+            SDL_Surface* textSurface = TTF_RenderText_Solid(font, line.c_str(), { 255, 255, 255 });
+            SDL_Texture* textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
+
+            SDL_Rect textRect = { attackLogRect.x + sidePadding, yOffset, textSurface->w, textSurface->h };
+            SDL_RenderCopy(renderer, textTexture, nullptr, &textRect);
+
+            yOffset += lineHeight;
+            visibleLinesCount++;
+
+            //Clean
+            SDL_FreeSurface(textSurface);
+            SDL_DestroyTexture(textTexture);
+        }
+    }
+}
 
 void Game::clean()
 {
@@ -320,11 +410,13 @@ void Game::clean()
     TextureManager::clean(gladiatorTexture);
     SDL_DestroyWindow(window);
     SDL_DestroyRenderer(renderer);
+    SDL_DestroyTexture(attackLogTexture);
     TTF_CloseFont(font);  // Close the font
     TTF_Quit();  // Quit TTF
     SDL_Quit();
 }
 
-bool Game::running() const {
+bool Game::running() const
+{
     return isRunning;
 }

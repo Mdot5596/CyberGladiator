@@ -34,7 +34,7 @@ public:
     void renderHealth(int health, bool isPlayer);
     void displayAttackOptions();
     void renderAttackButtons();
-
+    void renderAttackLog();
 
 
 private:
@@ -53,6 +53,7 @@ private:
 
     //Fonts
     TTF_Font* font;
+    TTF_Font* font2;
 
     //SFX - NEED TO ADD BACKGROUND MUSIC AND SFX
 
@@ -78,6 +79,25 @@ private:
         { 425, 600, 250, 250 }, // Position for second attack button
         { 700, 600, 250, 250 }   // Position for third attack button
     };
+
+
+    //attack log
+    std::vector<std::string> attackLog; // Stores recent attack messages
+    SDL_Texture* attackLogTexture;      // Texture for the attack log display
+    int screenWidth = 1024;
+    int screenHeight = 768;
+
+
+    // Set the size of the attack log with a slightly larger width and height
+    SDL_Rect attackLogRect = 
+    {
+        (screenWidth - 550) / 2,  // Center horizontally with new width
+        (screenHeight - 550) / 2, // Center vertically with new height
+        550,                       // New width
+        600                        // New height
+    };
+
+
 
 
 };
