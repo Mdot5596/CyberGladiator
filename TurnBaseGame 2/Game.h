@@ -45,6 +45,7 @@ private:
     //Textures:
     SDL_Texture* backgroundTexture;
     SDL_Texture* gladiatorTexture;
+    SDL_Texture* goblinTexture;
     SDL_Texture* menuBackgroundTexture;
     SDL_Texture* buttonNormalTexture;
     SDL_Texture* buttonHoverTexture;

@@ -36,15 +36,16 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
         font2 = TTF_OpenFont("assets/Caviar_Dreams_Bold.ttf", 12); //CHANGE - FONT SUCKS ATM
 
         // Load Textures
-        menuBackgroundTexture = TextureManager::loadTexture("assets/background.png", renderer);//SHIT
+        menuBackgroundTexture = TextureManager::loadTexture("assets/background1.png", renderer);//SHIT
         buttonNormalTexture = TextureManager::loadTexture("assets/STARTBTN.png", renderer);//GOOD
         buttonHoverTexture = TextureManager::loadTexture("assets/startbown.png", renderer);//GOOD
-        backgroundTexture = TextureManager::loadTexture("assets/TESTWALL.png", renderer);//SHIT
-        gladiatorTexture = TextureManager::loadTexture("assets/dude.png", renderer);//SHIT
+        backgroundTexture = TextureManager::loadTexture("assets/TESTWALL1.png", renderer);//SHIT
+        gladiatorTexture = TextureManager::loadTexture("assets/gladiator.png", renderer);//SHIT
+        goblinTexture = TextureManager::loadTexture("assets/goblin.png", renderer);//good
         attackButtonTextures[0] = TextureManager::loadTexture("assets/slashbtn.png", renderer);
         attackButtonTextures[1] = TextureManager::loadTexture("assets/kickbtn.png", renderer);
         attackButtonTextures[2] = TextureManager::loadTexture("assets/fireballbtn.png", renderer);
-        attackLogTexture = TextureManager::loadTexture("assets/attacklog.png", renderer);
+        attackLogTexture = TextureManager::loadTexture("assets/attacklog1.png", renderer);
 
     }
     else
@@ -133,7 +134,7 @@ void Game::handleEvents()
                     if (enemy.isAlive())
                     {
                         std::cout << enemy.getName() << " attacks " << player.getName() << "!\n";
-                        player.receiveDamage(5);  // Example damage
+                        player.receiveDamage(15);  // Example damage
 
                         // Log enemy attack
                         std::string enemyAttackMessage = enemy.getName() + " attacks " + player.getName() +
@@ -159,6 +160,8 @@ void Game::handleEvents()
                 player = Player("Cyber Gladiator");
                 enemy = Enemy("Goblin");
                 currentState = GameState::MENU;
+                //clears attacklog after each game
+                attackLog.clear();
             }
         }
     }
@@ -241,8 +244,15 @@ void Game::renderPlay()
     SDL_Rect destRect = { 0, 0, 1024, 768 }; // Background position and size
     TextureManager::render(backgroundTexture, renderer, destRect);
 
-    SDL_Rect gladiatorRect = { 100, 100, 150, 150 }; // Gladiator position and size
+    SDL_Rect gladiatorRect = { 700, 184, 400, 400 }; // Gladiator position and size
     TextureManager::render(gladiatorTexture, renderer, gladiatorRect);
+
+
+    SDL_Rect goblinRect = { -50, 184, 400, 400 };
+    TextureManager::render(goblinTexture, renderer, goblinRect);
+
+  
+
 
     renderAttackLog();
 
@@ -260,12 +270,17 @@ void Game::renderHealth(int health, bool isPlayer)
     SDL_Surface* textSurface = TTF_RenderText_Solid(font, healthText.c_str(), textColor);
     SDL_Texture* textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
 
-    // Position for the text
     SDL_Rect textRect;
-    textRect.x = isPlayer ? (800 - textSurface->w - 10) : 10; // Player health on the right side, enemy on the left
-    textRect.y = 10; // Y position
-    textRect.w = textSurface->w; // Width of the text
-    textRect.h = textSurface->h; // Height of the text
+    if (isPlayer) {
+        textRect.x = 700; // Adjust for player's health text position (further to the left)
+        textRect.y = 50;  // Lower the player's health text
+    }
+    else {
+        textRect.x = 100; // Adjust for goblin's health text position (near left side)
+        textRect.y = 50;  // Higher up for goblin's health text
+    }
+    textRect.w = textSurface->w;
+    textRect.h = textSurface->h;
 
     //CAN CHANGE ALL OF THIS AND REPLACEWITH A IMAGE INSEAD OF SDL CREATING BOX????????????????
 
@@ -408,6 +423,7 @@ void Game::clean()
     // Clean up textures and SDL
     TextureManager::clean(backgroundTexture);
     TextureManager::clean(gladiatorTexture);
+    TextureManager::clean(goblinTexture);
     SDL_DestroyWindow(window);
     SDL_DestroyRenderer(renderer);
     SDL_DestroyTexture(attackLogTexture);
