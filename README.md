@@ -3,7 +3,7 @@
 <p>in this report i will document the creation of this game etc </p>
 
 <h4>Game Guide</h4>
-
+![Tux, the Linux mascot]("D:\Uni\3016\SSforgit.png")
 <h4>YouTube Link:</h4>
 
 <h4>How to Run the executable</h4>
