@@ -1,8 +1,5 @@
 <h1>Cyber Gladiator</h1>
 
-<p>in this report i will document the creation of this game etc </p>
-
-
 <h3>How to play Cyber Gladiator</h3>
 
 - **Controls**:
@@ -77,11 +74,34 @@ SDL Mixer, this is used for handling audio in my game.</p>
 <p>The renderAttackLog() method takes care of displaying the log with proper text wrapping:</p>
 <p>std::vector<std::string> wrappedLines = wrapText(font, *it, attackLogRect.w - 2 * sidePadding);</p>
   
-<h2>UML design diagrams</h2>
-<p>ETC</p>
 
 <h2>Exception handling and test cases</h2>
-<p>ETC</p>
+<p>I carried out various tests when creating this game to ensure there were no major problems at launch. Some of these tests included:</p>
+<h3>Testing the game is properly initialised:</h3>
+<p>Making sure the game window launched in the correct dimensions</p>
+<p>Making sure the SDL libraries and components like SDL_ttf and SDL_mixer are properly initialised</p>
+<p>Ensuring the background music plays at launch, and the start menu has the correct background texture</p>
+<p>Making sure the start button functions</p>
+
+<h3>Testing the Game States and Transitions:</h3>
+<p>Verifying transition from MENU to PLAY state</p>
+<p>Verify transition from PLAY to GAME_OVER state</p>
+<p>Verify transition from GAME_OVER to MENU state</p>
+
+<h3>Testing the Combat System:</h3>
+<p>Ensure the player can perform an attack</p>
+<p>Ensure the Enemy can perform an attack, and make sure it happens after the player attacks</p>
+<p>Verify correct calculation of damage</p>
+<p>Test player's health depletion</p>
+<p>Test enemy’s health depletion</p>
+
+<h3>Testing the UI and Interaction:</h3>
+<p>Verify button states (Normal, Hover, Pressed)</p>
+<p>Verify correct attack buttons are displayed and interactable</p>
+<p>Test attack log displays correctly</p>
+<p>Verify health UI renders correctly</p>
+
 
 <h2>A brief evaluation of what i have achieved and what i would do differenlty</h2>
-<p>ETC</p>
+<p>I am very confident and happy in what I have achieved just by using SDL and C++, this was my first time using and experimenting with SDL and I feel like I have learnt a lot during this project. I also am happy with the progress I have made in strengthening my c++ skills as I now feel more confident in working with classes and object-oriented based code. What i would do differently if I had to do a project similar to this again is learn how to use animation in SDL, I’m not sure if there is a method on making animation using SDL but if there is i would want to learn about it and implement it into my work. I also would like to have added more enemies and a lives system so the player could keep playing after defeating an enemy, but unfortunately, I did not have enough time.</p>
+<p>Thank you for taking the time to read this report - Morgan Hodge</p>
