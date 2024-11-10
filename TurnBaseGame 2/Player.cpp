@@ -34,7 +34,7 @@ void Player::performAttack(Enemy& enemy)
     }
 
     std::cout << name << " attacks " << enemy.getName() << " with " << attackOptions[currentAttackIndex] << " Helath is now " << enemy.getHealth() << "!\n"; //golbin has been killed infinate
-    enemy.receiveDamage(5); // Example damage (tbc)
+    enemy.receiveDamage(rand()%30); // Example damage (tbc)
 }
 
 
