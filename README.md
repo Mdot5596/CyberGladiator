@@ -9,7 +9,7 @@
   - To win, you must defeat the goblin before he defeats you
 
 
-<h4>YouTube Link:</h4>
+<h4>YouTube Link: https://youtu.be/1z48uRbFQiE</h4>
 
 <h2>How to Run the executable</h2>
 <p>In order to run the executable, you must first unzip the file called “Game Files” and inside that folder will be a executable called “TurnBasedGame” which you can then double click to launch.</p>
