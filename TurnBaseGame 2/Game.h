@@ -13,7 +13,6 @@ enum class GameState
     GAME_OVER,
     EXIT
 
-    //WIN AND LOSE NEED 2 B ADDED
 };
 
 enum ButtonState { NORMAL, HOVER, PRESSED };
@@ -56,7 +55,6 @@ private:
     TTF_Font* font;
     TTF_Font* font2;
 
-    //SFX - NEED TO ADD BACKGROUND MUSIC AND SFX
 
     GameState currentState;
     Player player;                 // Player object
@@ -76,8 +74,8 @@ private:
 
     SDL_Rect attackButtonRects[3] =
     {
-        { 150, 600, 250, 250 }, // Position for first attack button (x, y, width, height)
-        { 425, 600, 250, 250 }, // Position for second attack button
+        { 150, 600, 250, 250 },  // Position for first attack button (x, y, width, height)
+        { 425, 600, 250, 250 },  // Position for second attack button
         { 700, 600, 250, 250 }   // Position for third attack button
     };
 

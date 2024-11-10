@@ -6,7 +6,7 @@ Enemy::Enemy(const std::string& name) : name(name), health(100) {}
 void Enemy::receiveDamage(int damage)
 {
     health -= damage;
-    if (health < 0) health = 0; // Prevents going negative health
+    if (health < 0) health = 0; // Prevents going into negative health
 }
 
 bool Enemy::isAlive() const

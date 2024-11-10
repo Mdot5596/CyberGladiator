@@ -8,7 +8,7 @@
 #include <SDL_mixer.h>
 
 
-Game::Game() : isRunning(false), window(nullptr), renderer(nullptr), currentState(GameState::MENU), player("Cyber Gladiator"), enemy("Goblin") {} //to long lol
+Game::Game() : isRunning(false), window(nullptr), renderer(nullptr), currentState(GameState::MENU), player("Cyber Gladiator"), enemy("Goblin") {} 
 
 
 Game::~Game()
@@ -31,27 +31,28 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
         isRunning = (window && renderer);
         std::cout << "SDL initialized successfully.\n";
 
-        //Display attack options (terminal) need toSDL This
         displayAttackOptions();
 
         //Load Fonts
         TTF_Init();
-        font = TTF_OpenFont("assets/Caviar_Dreams_Bold.ttf", 24); //CHANGE - FONT SUCKS ATM
-        font2 = TTF_OpenFont("assets/edo.ttf", 12); //CHANGE - FONT SUCKS ATM
+        font = TTF_OpenFont("assets/Caviar_Dreams_Bold.ttf", 24); 
+        font2 = TTF_OpenFont("assets/edo.ttf", 12); 
 
         // Load Textures
-        menuBackgroundTexture = TextureManager::loadTexture("assets/background1.png", renderer);//SHIT
-        buttonNormalTexture = TextureManager::loadTexture("assets/STARTBTN.png", renderer);//GOOD
-        buttonHoverTexture = TextureManager::loadTexture("assets/startbown.png", renderer);//GOOD
-        backgroundTexture = TextureManager::loadTexture("assets/TESTWALL1.png", renderer);//SHIT
-        gladiatorTexture = TextureManager::loadTexture("assets/gladiator.png", renderer);//SHIT
-        goblinTexture = TextureManager::loadTexture("assets/goblin.png", renderer);//good
+        menuBackgroundTexture = TextureManager::loadTexture("assets/background1.png", renderer);
+        buttonNormalTexture = TextureManager::loadTexture("assets/STARTBTN.png", renderer);
+        buttonHoverTexture = TextureManager::loadTexture("assets/startbown.png", renderer);
+        backgroundTexture = TextureManager::loadTexture("assets/TESTWALL1.png", renderer);
+        gladiatorTexture = TextureManager::loadTexture("assets/gladiator.png", renderer);
+        goblinTexture = TextureManager::loadTexture("assets/goblin.png", renderer);
         attackButtonTextures[0] = TextureManager::loadTexture("assets/slashbtn.png", renderer);
         attackButtonTextures[1] = TextureManager::loadTexture("assets/kickbtn.png", renderer);
         attackButtonTextures[2] = TextureManager::loadTexture("assets/fireballbtn.png", renderer);
         attackLogTexture = TextureManager::loadTexture("assets/attacklog1.png", renderer);
 
-        // Initialize SDL_mixer for music
+
+
+        // Initialise SDL_mixer for music
         if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0) {
             std::cerr << "SDL_mixer could not initialize! SDL_mixer Error: " << Mix_GetError() << "\n";
         }
@@ -62,7 +63,7 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
                 std::cerr << "Failed to load background music: " << Mix_GetError() << "\n";
             }
             else {
-                Mix_PlayMusic(backgroundMusic, -1);  // Loop indefinitely
+                Mix_PlayMusic(backgroundMusic, -1);  // Loop 
             }
         }
 
@@ -325,7 +326,7 @@ void Game::renderHealth(int health, bool isPlayer)
 
 void Game::renderGameOver()
 {
-    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); // Set background colour
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); 
     SDL_RenderClear(renderer);
 
     // Display Game Over Message
